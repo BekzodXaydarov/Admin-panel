@@ -6,10 +6,14 @@ import { setUser } from "../../redux/redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { setLoader } from "../../redux/loader";
+import { Config, postRequest } from "../../services/api";
+import { useUser } from "../../redux/selectors";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useUser();
   const form = useForm({
     mode: "uncontrolled",
     initialValues: { name: "", password: "" },
@@ -26,21 +30,7 @@ export default function Login() {
       password: date.password,
     });
 
-    const config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://epos-admin.dadabayev.uz/api/auth/login",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization:
-          "Bearer Bearer 21|1wQQrOXLjbOAPaQRlBPb7mMAQVpxF10I6uiBJLZO567d04ec",
-      },
-      data: data,
-    };
-
-    axios
-      .request(config)
+    postRequest("auth/login", user?.token)
       .then(({ data }) => {
         dispatch(setUser(data?.result));
         dispatch(setLoader(false));
@@ -48,11 +38,12 @@ export default function Login() {
           name: "",
           password: "",
         });
-        navigate('/');
+        navigate("/");
       })
       .catch((error) => {
         console.log("error=>", error);
         dispatch(setLoader(true));
+        toast.error("Error");
       });
   };
 

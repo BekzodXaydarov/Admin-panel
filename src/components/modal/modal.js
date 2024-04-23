@@ -5,7 +5,6 @@ import { useDisclosure } from '@mantine/hooks';
 
 export default function ModalComponent({btn_title,body,title}) {
   const [opened, { open, close }] = useDisclosure(false);
-
   return (
     <>
       <Modal

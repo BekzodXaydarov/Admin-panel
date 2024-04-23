@@ -41,19 +41,21 @@ export const deleteRequest = (url, token) => {
   const config = configuration(token);
   return token ? axios.delete(BASE_URL + url, config) : defaultRequest;
 };
-export const post = (url, data = {}, config) =>axios.post(BASE_URL + url, data, config);
+export const post = (url, data = {}, config) =>
+  axios.post(BASE_URL + url, data, config);
 
-export const Config = (method,url,data,token) =>{
-   return {
-        method: method,
-        maxBodyLength: Infinity,
-        url: BASE_URL + url,
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization:
-            "Bearer Bearer " + token,
-        },
-        data: data,
-      };
-}
+export const Config = (method, url, data, token) => {
+  const config = {
+    method: method,
+    maxBodyLength: Infinity,
+    url: BASE_URL + url,
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization:
+        "Bearer Bearer " + token,
+    },
+    data: data,
+  };
+  return config
+};

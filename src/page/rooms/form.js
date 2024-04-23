@@ -1,72 +1,88 @@
-import { Button, NumberInput, Select } from "@mantine/core";
-import axios from "axios";
-import React, { useState } from "react";
+import { Box, Button, Group, NumberInput, Select } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { postRequest } from "../../services/api";
 import { toast } from "react-toastify";
-import { Config } from "../../services/api";
+import { useUser } from "../../redux/selectors";
 
-export default function Form({ handleUpdate, close }) {
-  const [id, setId] = useState(0);
-  const [poeple, setPoeple] = useState(0);
-  const [status, setStatus] = useState("");
-  const onSubmit = () => {
-    const data = JSON.stringify({
-      name: id,
-      room_type_id: id,
-      places: poeple,
-      room_type_name: status,
-    });
-    axios
-      .request(
-        Config(
-          "post",
-          "room/create",
-          data,
-          "91|jPoOjiFT2oXQ1jgCiEI0Ltu0eHEPf7Itw78HmXpr6172bc08"
-        )
-      )
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-        toast.success("Data is add");
+const inputs = [
+  {
+    name: "name",
+    label: "Xona/Stol raqami",
+    tag: NumberInput,
+  },
+  {
+    name: "places",
+    label: "Nechi kishilik",
+    tag: NumberInput,
+  },
+  {
+    name: "room_type_id",
+    label: "Joy turi",
+    tag: Select,
+    data: [
+      {
+        value: "1",
+        label: "Xona",
+      },
+      {
+        value: "2",
+        label: "Stol",
+      },
+    ],
+    disabled: false,
+  },
+];
+
+export default function Form({ handleUpdate, close, setLoader }) {
+  const user = useUser();
+  const form = useForm({
+    initialValues: {
+      name: "",
+      places: "",
+      room_type_id: "1",
+    },
+  });
+
+  const onSubmit = (values) => {
+    setLoader(true);
+    postRequest("room/create", values, user?.token)
+      .then(({ data }) => {
+        setLoader(false);
+        toast.success(data?.result || "Success");
         handleUpdate(true);
+        close();
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
+        setLoader(false);
         toast.error("Error");
       });
-
-    close();
   };
+
   return (
-    <form onSubmit={(e) => e.preventDefault()}>
-      <NumberInput
-        defaultValue={0}
-        placeholder="Xona/Stol raqami"
-        label="Xona/Stol raqami"
-        onChange={(e) => setId(e)}
-        value={id}
-      />
-      <NumberInput
-        mt={"15px"}
-        defaultValue={0}
-        placeholder="Nechi kishilik"
-        label="Nechi kishilik"
-        onChange={(e) => setPoeple(e)}
-        value={poeple}
-      />
-      <Select
-        mt={"15px"}
-        data={[
-          { value: "Xona", label: "Xona" },
-          { value: "Stol", label: "Stol" },
-        ]}
-        placeholder="Joy Turi"
-        label="Joy Turi"
-        onChange={(e) => setStatus(e)}
-        value={status}
-      />
-      <Button onClick={() => onSubmit()} color="blue" ml={"75%"} mt={"20px"}>
-        Yuborish
-      </Button>
-    </form>
+    <Box mx="auto">
+      <form onSubmit={form.onSubmit(onSubmit)}>
+        {inputs.map((input) => (
+          <input.tag
+            key={input.name}
+            mt={"md"}
+            required
+            withAsterisk
+            label={input.label}
+            placeholder={input.label}
+            data={input.data?.map((element) => ({
+              ...element,
+              disabled: form.values.room_type_id === element.value,
+            }))}
+            disabled={input.disabled}
+            {...form.getInputProps(input.name)}
+          />
+        ))}
+        <Group justify="flex-end" mt="md">
+          <Button type="submit">Yuborish</Button>
+        </Group>
+      </form>
+    </Box>
   );
 }
+

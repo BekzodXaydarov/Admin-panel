@@ -3,7 +3,6 @@ import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Login from "./page/admin/login";
 import Dashboard from "./page/dashboard";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { Box, Loader } from "@mantine/core";
 import Sidebar from "./components/SideBar";
 import "./App.css";
@@ -11,6 +10,9 @@ import LiveOrders from "./page/live-orders";
 import Room from "./page/rooms";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Waiter from "./page/waiter";
+import { useLoader, useUser } from "./redux/selectors";
+import Product from "./page/products";
 
 const routes = [
   {
@@ -26,6 +28,14 @@ const routes = [
     element: <Room />,
   },
   {
+    path:"/waiter",
+    element:<Waiter />
+  },
+  {
+    path:"/products",
+    element:<Product />
+  },
+  {
     path: "/login",
     element: <Login />,
   },
@@ -34,8 +44,8 @@ const routes = [
 export default function App() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const user = useSelector((state) => state.redux);
-  const loader = useSelector((state) => state.loader.value);
+  const user = useUser();
+  const loader = useLoader();
   const isHideSideBar = useMemo(
     () => ["/login"].includes(pathname),
     [pathname]

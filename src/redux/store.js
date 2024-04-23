@@ -1,13 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
-import redux from "./redux";
+import user from "./redux";
 import loader from "./loader";
 import rooms from "./rooms";
+import waiter from "./waiter";
+import product from "./product";
 
 const store = configureStore({
   reducer: {
-    redux,
+    user,
     loader,
     rooms,
+    waiter,
+    product
   },
 });
 

@@ -2,12 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const Loader = createSlice({
   name: "loader",
-  initialState: {
-    value: false,
-  },
+  initialState: false,
   reducers: {
-    setLoader(_, {payload}) {
-      _.value = payload
+    setLoader(_, { payload }) {
+      return payload;
     },
   },
 });

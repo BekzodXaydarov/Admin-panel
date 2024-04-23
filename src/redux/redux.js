@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export const Reudx = createSlice({
+export const User = createSlice({
   name: "user",
   initialState:JSON.parse(localStorage.getItem("user")) || {},
   reducers: {
@@ -11,6 +11,6 @@ export const Reudx = createSlice({
   },
 });
 
-export const { setUser } = Reudx.actions;
+export const { setUser } = User.actions;
 
-export default Reudx.reducer;
+export default User.reducer;
